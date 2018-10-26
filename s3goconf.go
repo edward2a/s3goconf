@@ -66,7 +66,7 @@ func main() {
 
   if *region == "" {
     log.Println("Region not declared, checking EC2 user-data...")
-    get_region_from_userdata()
+    region = get_region_from_userdata()
   }
 
   *s3_url = strings.TrimPrefix(*s3_url, "s3://")
