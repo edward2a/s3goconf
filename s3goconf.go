@@ -2,10 +2,11 @@ package main
 
 import (
   "flag"
-  "fmt"
   "log"
+  //"net/http"
   "os"
   "strings"
+  "time"
   "github.com/aws/aws-sdk-go/aws"
   "github.com/aws/aws-sdk-go/aws/session"
   "github.com/aws/aws-sdk-go/service/s3"
@@ -13,10 +14,14 @@ import (
 )
 
 
+//var az_url = "http://169.254.169.254/latest/meta-data/placement/availability-zone/"
+
+
 func get_downloader(region string) *s3manager.Downloader {
   aws_session := session.Must(session.NewSession(&aws.Config{ Region: aws.String(region) } ) )
   return s3manager.NewDownloader(aws_session)
 }
+
 
 func download_file(dlr *s3manager.Downloader, src []string, dst *string) {
 
@@ -32,6 +37,21 @@ func download_file(dlr *s3manager.Downloader, src []string, dst *string) {
   if err != nil { log.Fatal(err) }
 }
 
+
+/*
+func get_region_from_userdata() *string {
+
+  client := &htp.Client{ Timeout: time.Second * 5 }
+  req, _ :=  http.NewRequest("GET", az_url, nil)
+  res, err := client.Do(req)
+  if err != { log.Fatal(err) }
+  body, err := ioutil.ReadAll(udata_resp.Body)
+  if err != nil { log.Fatal(err) }
+
+}
+*/
+
+
 func main() {
 
   region := flag.String("region", "", "AWS Region")
@@ -39,9 +59,9 @@ func main() {
   dest_file := flag.String("output", "", "Output file")
   flag.Parse()
 
-  if &region == nil {
-    fmt.Println("blah!")
-  }
+/*  if *region == "" {
+    log.Info("Region not declared, checking EC2 user-data...")
+  }*/
 
   *s3_url = strings.TrimPrefix(*s3_url, "s3://")
   s3_obj_loc := strings.SplitN(*s3_url, "/", 2)
